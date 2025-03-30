@@ -130,7 +130,7 @@ def convert_region_code_to_korean(code):
 #================================================================
 class ImageGenerator:
     def __init__(self, save_path):
-        self.save_path = save_path
+        self.save_path = save_path + '/'
         # Plate
         self.plate_white = cv2.imread("assets/plate.jpg")
         self.plate_yellow = cv2.imread("assets/plate_y.jpg")
@@ -186,7 +186,7 @@ class ImageGenerator:
       
         for i, Iter in enumerate(range(num)):
             Plate = cv2.resize(self.plate_white, (520, 110))
-            label = "t01_"
+            label = str() # "t01_"
             # row -> y , col -> x
             row, col = 13, 35  # row + 83, col + 56
             # number 1
@@ -252,7 +252,7 @@ class ImageGenerator:
       
         for i, Iter in enumerate(range(num)):
             Plate = cv2.resize(self.plate_green2, (520, 110))
-            label = "t01a_"
+            label = str() # "t01a_"
             # row -> y , col -> x
             row, col = 13, 35  # row + 83, col + 56
             # number 1
@@ -319,7 +319,7 @@ class ImageGenerator:
 
         for i, Iter in enumerate(range(num)):
             Plate = cv2.resize(self.plate_white, (355, 155))
-            label = "t02_"
+            label = str() # "t02_"
             row, col = 46, 10  # row + 83, col + 56
 
             # number 1
@@ -385,8 +385,7 @@ class ImageGenerator:
         for i, Iter in enumerate(range(num)):
             Plate = cv2.resize(self.plate_yellow, (336, 170))
 
-            #label = str()
-            label = 't03_'
+            label = str() # "t03_"
             
             # row -> y , col -> x
             row, col = 8, 76
@@ -460,8 +459,7 @@ class ImageGenerator:
         for i, Iter in enumerate(range(num)):
             Plate = cv2.resize(self.plate_green, (336, 170))
 
-            #label = str()
-            label = 't04_'
+            label = str() # "t04_"
             
             # row -> y , col -> x
             row, col = 8, 76
@@ -536,7 +534,7 @@ class ImageGenerator:
             Plate = cv2.resize(self.plate_green, (336, 170))
             random_width, random_height = 336, 170
             #label = "Z"
-            label = 't05_'
+            label = str() # "t05_"
 
             # row -> y , col -> x
             row, col = 8, 78
