@@ -143,9 +143,36 @@ def image_augmentation(img, crop_type2=False):
             print(f"⚠️ 크롭 생략: 이미지 크기 ({h}, {w})가 너무 작음")
             return img
 
-def mkdir(fpath):
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+# 단순 폴더 생성
+def make_dir(folder_path):
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
+# 폴더가 존재하면 폴더의 이미지를 지우고, 없으면 새로 생성
+def clear_or_create_image_folder(folder_path):
+    """
+    입력 폴더를 확인하고, 폴더가 있으면 내부의 이미지 파일을 삭제하고, 없으면 새로 만듭니다.
+
+    Args:
+        folder_path (str): 폴더 경로
+    """
+    path = Path(folder_path)
+
+    if path.exists():
+        # 폴더가 존재하면 내부의 이미지 파일 삭제
+        for file_path in path.glob("*"):
+            if file_path.is_file() and file_path.suffix.lower() in (".jpg", ".jpeg", ".png", ".gif"):
+                file_path.unlink()
+        print(f"폴더 '{folder_path}' 내부의 이미지 파일을 삭제했습니다.")
+    else:
+        # 폴더가 존재하지 않으면 새로 생성
+        path.mkdir(parents=True, exist_ok=True)
+        print(f"폴더 '{folder_path}'를 생성했습니다.")
+
+
+def save_to_file(folder_path, label, Plate):
+    cv2.imwrite(folder_path + label + ".jpg", Plate)
+
 
 # 안전하게 배치하려면: col + width <= Plate.shape[1] 체크
 def safe_paste(dst, src, row, col):
@@ -261,25 +288,18 @@ def convert_region_code_to_korean(code):
 #print(convert_region_code_to_korean('F'))  # 대전
 #print(convert_region_code_to_korean('Z'))  # 알 수 없음
 
-def save_to_file(folder_path, label, Plate):
-    """폴더가 없으면 생성합니다."""
-    if not os.path.exists(folder_path):
-        os.makedirs(folder_path)
-        print(f"폴더 '{folder_path}'를 생성했습니다.")
-    else:
-        #print(f"폴더 '{folder_path}'가 이미 존재합니다.")
-        pass
-
-    cv2.imwrite(folder_path + label + ".jpg", Plate)
 
 
 #================================================================
 class ImageGenerator:
-    def __init__(self, save_path):
+    def __init__(self, save_path, is_append):
         self.save_path = save_path + '/'
 
-        print( 'path = ', get_asset_path("plate.jpg") )
-        
+        if is_append:
+            make_dir(self.save_path)
+        else:
+            clear_or_create_image_folder(self.save_path)
+
         # Plate
         self.plate_white = cv2.imread( get_asset_path("plate.jpg") )
         self.plate_yellow = cv2.imread(get_asset_path("plate_y.jpg") )
@@ -778,27 +798,31 @@ class ImageGenerator:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-o", "--output", help="save image directory",
+    parser.add_argument("-o", "--output_dir", help="output image directory",
                         type=str, default="./outputs/")
     parser.add_argument("-n", "--num", help="number of image",
                         type=int, default=1)
-    parser.add_argument("-s", "--is_save", help="save or imshow",
-                        type=bool, default=True)
+    parser.add_argument("-s", "--save", help="save or imshow",
+                        type=str, default="true")
     parser.add_argument("-w", "--warp", help="{False, perspective, affine}",
-                        type=str, default="False")
-    parser.add_argument("-b", "--is_random_brightness", help="True, False",
-                        type=bool, default=False)
-    parser.add_argument('--types', nargs='+', default=['type01', 'type02', 'type03', 'type04', 'type05', 'type06'],
-                        help='리스트 형태로 Type 메서드를 선택합니다.')
+                        type=str, default="false")
+    parser.add_argument("-b", "--rb", help="{true, false}",
+                        type=str, default="false")
+    parser.add_argument("-a", "--append", help="{true, false}",
+                        type=str, default="false")
+    parser.add_argument('--types', nargs='+', default=['type01', 'type02', 'type03', 'type04', 'type05', 'type06'], help="e.g.  --types type01 type02 type05")
     args = parser.parse_args()
     
-    img_dir = args.output
-    ig = ImageGenerator(img_dir)
-   
     num_img = args.num
-    is_save = args.is_save
-    is_random_brightness = args.is_random_brightness
     warp = args.warp
+    is_save = args.save.lower() == 'true'
+    is_random_brightness = args.rb.lower() == 'true'
+    is_append = args.append.lower() == 'true'
+
+    output_dir = args.output_dir
+    ig = ImageGenerator(output_dir, is_append)
+
+    print(':: arguments = ', args)
     
     # 선택적으로 호출할 타입 목록 (예: 'type01', 'type03' 등)
     selected_types = args.types  # 리스트 형태로 들어온다고 가정    
