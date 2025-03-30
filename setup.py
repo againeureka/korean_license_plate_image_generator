@@ -7,7 +7,11 @@ setup(
     author='J. Park (againeureka)',
     author_email='jpark@keti.re.kr',
     py_modules=['lpgen'],  # <-- py 파일 단독일 경우
-    packages=find_packages(),
+    packages=['lpgen'],
+    include_package_data=True, # <-- assets 추가
+    package_data={
+        "lpgen": ["assets/**/*"],  # 모든 하위 파일 포함
+    },
     install_requires=[
         'opencv-python',
         'numpy',

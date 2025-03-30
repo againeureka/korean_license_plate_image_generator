@@ -16,6 +16,7 @@ korean_license_plate_image_generator/
 ├── outputs
 ├── README.md
 ├── run.sh
-└── setup.py
+├── setup.py
+└── MANIFEST.in
 ``
 

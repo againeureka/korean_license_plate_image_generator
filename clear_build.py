@@ -13,6 +13,7 @@ def remove_path(path):
 def clean():
     remove_path('build')
     remove_path('dist')
+    remove_path('outputs')
     
     # *.egg-info 폴더 제거
     for egg_info in glob.glob('*.egg-info'):

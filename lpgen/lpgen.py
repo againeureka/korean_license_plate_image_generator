@@ -6,6 +6,12 @@
 import os, random
 import cv2, argparse
 import numpy as np
+from pathlib import Path
+import pkg_resources  # 또는 importlib.resources (Python 3.9+)
+
+def get_asset_path(relative_path):
+    base = Path(__file__).parent
+    return os.path.join(base, 'assets', relative_path)
 
 def apply_augmentation(img, mode='perspective', crop=False):
     h, w = img.shape[:2]
@@ -271,50 +277,53 @@ def save_to_file(folder_path, label, Plate):
 class ImageGenerator:
     def __init__(self, save_path):
         self.save_path = save_path + '/'
+
+        print( 'path = ', get_asset_path("plate.jpg") )
+        
         # Plate
-        self.plate_white = cv2.imread("assets/plate.jpg")
-        self.plate_yellow = cv2.imread("assets/plate_y.jpg")
-        self.plate_green = cv2.imread("assets/plate_g.jpg")
-        self.plate_green2 = cv2.imread("assets/plate_g2.jpg")
+        self.plate_white = cv2.imread( get_asset_path("plate.jpg") )
+        self.plate_yellow = cv2.imread(get_asset_path("plate_y.jpg") )
+        self.plate_green = cv2.imread(get_asset_path("plate_g.jpg") ) 
+        self.plate_green2 = cv2.imread(get_asset_path("plate_g2.jpg") )
 
         # loading Number
-        folder = "./assets/num/"
+        folder = get_asset_path("num/")
         self.Number, self.number_list = folder_loading(folder)
         
         # loading Char
-        folder = "./assets/char1/"        
+        folder = get_asset_path("char1/")
         self.Char1, self.char_list = folder_loading(folder)
         
         # loading Number : yellow-two-line
-        folder = "./assets/num_y/"
+        folder = get_asset_path("num_y/")
         self.Number_y, self.number_list_y = folder_loading(folder)
 
         # loading Char
-        folder = "./assets/char1_y/"
+        folder = get_asset_path("char1_y/")
         self.Char1_y, self.char_list_y = folder_loading(folder)
 
         # loading Region
-        folder = "./assets/region_y/"
+        folder = get_asset_path("region_y/")
         self.Region_y, self.region_list_y = folder_loading(folder)
         
         # loading Number : green-two-line
-        folder = "./assets/num_g/"
+        folder = get_asset_path("num_g/")
         self.Number_g, self.number_list_g = folder_loading(folder)
 
         # loading Number : green-two-line
-        folder = "./assets/num_g2/"
+        folder = get_asset_path("num_g2/")
         self.Number_g2, self.number_list_g2 = folder_loading(folder)
 
         # loading Char
-        folder = "./assets/char1_g/"
+        folder = get_asset_path("char1_g/")
         self.Char1_g, self.char_list_g = folder_loading(folder)
 
         # loading Char
-        folder = "./assets/char2_g/"
+        folder = get_asset_path("char2_g/")
         self.Char2_g, self.char_list_g = folder_loading(folder)
 
         # loading Region
-        folder = "./assets/region_g/"
+        folder = get_asset_path("region_g/")
         self.Region_g, self.region_list_g = folder_loading(folder)
         #===========================================================
 
@@ -766,7 +775,6 @@ class ImageGenerator:
             # ✅ 저장 옵션
             if is_save:
                 save_to_file(self.save_path, label, Plate)
-
 
 def main():
     parser = argparse.ArgumentParser()
